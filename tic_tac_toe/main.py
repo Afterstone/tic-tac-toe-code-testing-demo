@@ -1,5 +1,5 @@
 from tic_tac_toe.player import Player
-from tic_tac_toe.board import Board
+from tic_tac_toe.board import BoardState, make_move, get_printable_board, check_winner
 import random
 
 
@@ -10,45 +10,38 @@ def get_human_player_details() -> Player:
     return Player(name, symbol)
 
 
-def make_random_move(board: Board, ai_player: Player) -> None:
-    # Select a random empty cell for the AI move
-    empty_cells = [
-        (r, c) for r in range(3) for c in range(3) if board.board[r][c] == " "
-    ]
+def make_random_move(board: BoardState, player: Player) -> None:
+    empty_cells = [(r, c) for r in range(3) for c in range(3) if board.board[r][c] == " "]
     if empty_cells:
         row, col = random.choice(empty_cells)
-        board.make_move(row, col, ai_player.symbol)
+        make_move(board, row, col, player.symbol)
 
 
-def run_game_loop_with_human_and_ai(
-    board: Board, human_player: Player, ai_player: Player
-) -> None:
+def run_game_loop_with_human_and_ai(board: BoardState) -> None:
     while True:
-        print(board.get_printable_board())
+        print(get_printable_board(board))
 
         # Get and handle human player's move
-        move = input(
-            f"{human_player.name}, enter your move (row and column, e.g., 1 2): "
-        )
+        move = input(f"{board.player_1.name}, enter your move (row and column, e.g., 1 2): ")
         row, col = map(int, move.split())
-        board.make_move(row, col, human_player.symbol)
+        make_move(board, row, col, board.player_1.symbol)
 
         # Check if the human player has won
         # TODO: Duplicated code, consider refactoring
-        winner = board.check_winner()
+        winner = check_winner(board)
         if winner:
-            print(board.get_printable_board())
+            print(get_printable_board(board))
             print(f"{winner.name} wins!")
             break
 
         # AI makes its move
-        make_random_move(board, ai_player)
+        make_random_move(board, board.player_2)
 
         # Check if the AI player has won
         # TODO: Duplicated code, consider refactoring
-        winner = board.check_winner()
+        winner = check_winner(board)
         if winner:
-            print(board.get_printable_board())
+            print(get_printable_board(board))
             print(f"{winner.name} wins!")
             break
 
@@ -57,9 +50,13 @@ def main():
     human_player = get_human_player_details()
     ai_player = Player("AI", "P" if human_player.symbol == "X" else "X")
 
-    board = Board(player_1=human_player, player_2=ai_player)
+    board = BoardState(
+        player_1=human_player,
+        player_2=ai_player,
+        board=[[" " for _ in range(3)] for _ in range(3)],
+    )
 
-    run_game_loop_with_human_and_ai(board, human_player, ai_player)
+    run_game_loop_with_human_and_ai(board)
 
 
 if __name__ == "__main__":
