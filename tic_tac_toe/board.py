@@ -1,5 +1,4 @@
 from tic_tac_toe.player import Player
-from tic_tac_toe.states import State
 from dataclasses import dataclass, field
 from typing import List
 
