@@ -54,7 +54,7 @@ def check_rows_for_winner(board_data: BoardState) -> Player | None:
     for row in board:
         # Check if all elements in the row are the same and not empty.
         # If they are, the symbol's owner is the winner.
-        if row[0] == row[0] == row[2] != " ":  # TODO: Error
+        if row[0] == row[1] == row[2] != " ":
             return player_1 if row[0] == player_1.symbol else player_2
     return None
 
@@ -87,6 +87,6 @@ def check_winner(board_data: BoardState) -> Player | None:
     winner = (
         check_rows_for_winner(board_data) 
         or check_columns_for_winner(board_data)
-        or check_diagonals_for_winner(board_data)
+        # or check_diagonals_for_winner(board_data)  # TODO: Implement diagonal check
     )
     return winner
